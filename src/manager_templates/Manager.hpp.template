@@ -1,0 +1,34 @@
+#ifndef {manager_type}_hpp
+#define {manager_type}_hpp
+
+#include "{object_type}.hpp"
+#include "IndexedSet.hpp"
+#include <stdint.h>
+#include <sqlite3.h>
+
+namespace varmodel {{
+
+{forward_declarations}
+
+struct {manager_type} {{
+    uint64_t next_id;
+    IndexedSet<{object_type}> collection;
+    
+    size_t size();
+    std::vector<{object_type} *> & objects();
+    {object_type} * object_for_id(uint64_t id);
+    
+    // Object management
+    {object_type} * create();
+    {object_type} * create(uint64_t id);
+    void destroy({object_type} * obj);
+    
+    // Checkpointing methods
+    void load_from_checkpoint(sqlite3 * db);
+    {resolve_references_signature};
+    void save_to_checkpoint(sqlite3 * db);
+}};
+
+}} // namespace varmodel
+
+#endif // #define {manager_type}_hpp

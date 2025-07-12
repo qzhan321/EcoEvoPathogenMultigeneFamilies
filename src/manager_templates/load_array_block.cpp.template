@@ -1,0 +1,15 @@
+
+    // Load rows from {object_type}_{array_var}
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {object_type}_{array_var};", -1, &stmt, NULL);
+        while(true) {{
+            if(sqlite3_step(stmt) != SQLITE_ROW) {{
+                break;
+            }}
+            {object_type} * obj = object_for_id(sqlite3_column_int64(stmt, 0));
+            size_t index = sqlite3_column_int64(stmt, 1);
+            obj->{array_var}[index] = sqlite3_column_{sqlite3_bind_type}(stmt, 2);
+        }}
+        sqlite3_finalize(stmt);
+    }}

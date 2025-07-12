@@ -1,0 +1,97 @@
+shai@ee-pascual-dell01://home/shai/Documents/varmodel2$ rm sqlite3/sqlite3.o
+shai@ee-pascual-dell01://home/shai/Documents/varmodel2$ ./build.py -p parameters-example.py -d rundir
+Building sqlite3...
+sqlite3 build complete.
+Generating managers in rundir/generated/managers
+  Generating StrainManager...
+  Generating GeneManager...
+  Generating PopulationManager...
+  Generating HostManager...
+  Generating InfectionManager...
+  Generating ImmuneHistoryManager...
+  Generating LocusImmunityManager...
+
+
+Generating
+  rundir/generated/parameters.hpp
+from
+  ./src/parameters.hpp.template
+
+c++ -O2 -g -std=c++11 -o bin/varmodel2 -ldl -lpthread -I /home/shai/Documents/varmodel2/sqlite3 /home/shai/Documents/varmodel2/sqlite3/sqlite3.o generated/managers/*.cpp src/*.cpp src/util/*.cpp -I src -I src/datamodel -I src/managers -I src/util -I generated -I generated/managers
+src/varmodel.cpp: In function ‘void varmodel::destroy_host(varmodel::Host*)’:
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:589:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(5, "Removing host id %llu from population %llu", host->id, pop->id);
+     ^
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:589:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(5, "Removing host id %llu from population %llu", host->id, pop->id);
+     ^
+src/varmodel.cpp: In function ‘bool varmodel::do_next_event()’:
+src/varmodel.cpp:252:27: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘varmodel::EventType’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:1327:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(1, "next_event_type: %d", next_event_type);
+     ^
+src/varmodel.cpp: In function ‘void varmodel::do_biting_event()’:
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:1403:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(1, "biting event pop: %llu", pop->id);
+     ^
+src/varmodel.cpp: In function ‘void varmodel::do_immigration_event()’:
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:1497:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(1, "immigration event pop: %llu", pop->id);
+     ^
+src/varmodel.cpp: In function ‘void varmodel::do_death_event()’:
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:1546:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(1, "Created new host id %llu in population %llu", new_host->id, pop->id);
+     ^
+src/varmodel.cpp:252:27: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+         printf(__VA_ARGS__); \
+                           ^
+src/varmodel.cpp:1546:5: note: in expansion of macro ‘PRINT_DEBUG’
+     PRINT_DEBUG(1, "Created new host id %llu in population %llu", new_host->id, pop->id);
+     ^
+src/varmodel.cpp: In function ‘void varmodel::write_summary()’:
+src/varmodel.cpp:1678:63: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+     printf("               n_infections: %llu\n", n_infections);
+                                                               ^
+src/varmodel.cpp:1679:61: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+     printf("                 n_infected: %llu\n", n_infected);
+                                                             ^
+src/varmodel.cpp:1680:74: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t {aka long unsigned int}’ [-Wformat=]
+     printf("    n_infections_cumulative: %llu\n", n_infections_cumulative);
+                                                                          ^
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `pthreadMutexTry':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:23982: undefined reference to `pthread_mutex_trylock'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `sqlite3ThreadCreate':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:27455: undefined reference to `pthread_create'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `pthreadMutexAlloc':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:23843: undefined reference to `pthread_mutexattr_init'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:23844: undefined reference to `pthread_mutexattr_settype'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:23846: undefined reference to `pthread_mutexattr_destroy'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `sqlite3ThreadJoin':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:27475: undefined reference to `pthread_join'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `unixDlError':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:36550: undefined reference to `dlerror'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `unixDlClose':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:36581: undefined reference to `dlclose'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `unixDlSym':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:36577: undefined reference to `dlsym'
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.o: In function `unixDlOpen':
+/home/shai/Documents/varmodel2/sqlite3/sqlite3.c:36536: undefined reference to `dlopen'
+collect2: error: ld returned 1 exit status
+shai@ee-pascual-dell01://home/shai/Documents/varmodel2$ 

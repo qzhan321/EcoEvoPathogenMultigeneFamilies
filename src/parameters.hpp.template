@@ -1,0 +1,257 @@
+#ifndef parameters_hpp
+#define parameters_hpp
+
+#include <string>
+#include <vector>
+#include <array>
+
+namespace varmodel {{
+
+/*** DEBUGGING ***/
+
+const bool {PRINT_FUNCTION_TRACE};
+const int64_t {PRINT_DEBUG_LEVEL};
+
+/*** OUTPUT SETTINGS ***/
+
+// Path to database output file for sampled data, absolute or relative to the working directory the program is executed in.
+const std::string {SAMPLE_DB_FILENAME};
+
+// Whether or not to write out all hosts to database
+const bool {OUTPUT_HOSTS};
+
+// Whether or not to write out all strains, genes, and alleles to database
+const bool {OUTPUT_STRAINS};
+
+// Whether or not to write out all genes to database
+const bool {OUTPUT_GENES};
+
+// Time points to sample hosts and their infections, in simulation time units;
+// e.g., you'd like to sample at the end of dry and the end of wet season during certain years, i.e., the 180th and 300th day.
+// this vector would be [180,300];
+const std::vector<double> {HOST_SAMPLING_PERIOD};
+
+// Number of infected hosts to sample
+const double {HOST_SAMPLE_SIZE};
+
+// Burn-in period for simulation before which output will not be written.
+const double {T_BURNIN};
+
+// EXPECTED time to reach equilibrium.
+const double {EXPECTED_EQUILIBRIUM};
+
+// which year to start sampling hosts and their infections.
+const double {HOST_SAMPLING_START_YEAR};
+
+/*** VERIFICATION SETTINGS ***/
+
+// How often to verify the validity of all data structures
+
+const bool {VERIFICATION_ON};
+
+const double {VERIFICATION_PERIOD};
+
+
+/*** CHECKPOINT SETTINGS ***/
+
+// Whether or not to load from a checkpoint file
+const bool {LOAD_FROM_CHECKPOINT};
+
+// Filename of checkpoint to load from
+const std::string {CHECKPOINT_LOAD_FILENAME};
+
+// Whether or not to save checkpoints
+const bool {SAVE_TO_CHECKPOINT};
+
+// Path to checkpoint output file
+const std::string {CHECKPOINT_SAVE_FILENAME};
+
+// How often, in simulation time units, to save checkpoints
+const double {CHECKPOINT_SAVE_PERIOD};
+
+
+/*** MODEL PARAMETERS ***/
+
+enum SelectionMode {{
+    SPECIFIC_IMMUNITY,
+    GENERAL_IMMUNITY,
+    NEUTRALITY
+}};
+const SelectionMode {SELECTION_MODE};
+
+// Random seed for simulation.
+const uint64_t {RANDOM_SEED};
+
+// Simulation time corresponding to one year
+const double {T_YEAR};
+                
+// Simulation end time
+const double {T_END};
+
+// Number of genes in the initial pool.
+const uint64_t {N_GENES_INITIAL};
+
+// Number of genes per pathogen strain.
+const uint64_t {N_GENES_PER_STRAIN};
+
+// Number of loci
+const uint64_t {N_LOCI};
+
+// Number of alleles at each locus, before mutations occur
+const std::array<uint64_t,N_LOCI> {N_ALLELES_INITIAL};
+
+// recombinational tolerance, rho, Drummond et al.
+const double {RHO};
+//whether the two ups groups do not share allele to start with. if true, two groups are started separately with different sets of alleles
+//otherwise, the two groups start with same sets of alleles
+const bool {GROUPS_DO_NOT_SHARE_ALLELE};
+// if 10% is group 0, 90% is group 1, write [1,9], only two groups are allowed
+const std::vector<double> {GROUP_GENE_RATIOS};
+// if all the strains generated have fixed ratio of the two groups
+const bool {FIX_GENE_RATIO};
+//whether recombination only occurs in genes with similar alleles
+const bool {SIMILARITY_BIAS_RECOMBINATION};
+// trade-off level
+const double {TRADE_OFF_S};
+//whether gene's functionality is continuous or categorical. if it's continuous, it's from 0 to 1.
+const bool {CONTINUOUS_FUNCTION};
+//if categorical list the category for the two groups; can be [0.5,1] or [0.3,1]
+const std::array<double, 2> {FUNCTION_CATEGORY};
+//duration of expression per gene for the two groups; can be [6,6] or [6,12] for example
+const std::array<double, 2> {DURATION_CATEGORY};
+// whether directly specify the duration and functionality of two groups
+const bool {FUNC_DUR_DIRECT_SPECIFIFICATION};
+//minumum function to sustain growth
+const double {MINIMUM_FUNCTION};
+// Transmissibility of genes
+const double {GENE_TRANSMISSIBILITY}; 
+
+// Whether coinfection reduces transmissibility
+const bool {COINFECTION_REDUCES_TRANSMISSION};
+// Whether upsGroup target different receptor, partition in spatial competition
+const bool {UPSGROUP_DIFF_RECEPTOR};
+// Whether high function expresses first
+const bool {HIGH_FUNCTION_EXPRESS_FIRST};
+// Global immunity loss rate
+const double {IMMUNITY_LOSS_RATE};
+
+// Probability per gene, per unit time of a mutation when a strain is picked up.
+const double {MUTATION_RATE};
+
+// whether recombination is allowed in the simulation
+const bool {RECOMBINATION_ON};
+// Rate of ectopic recombination, per possibility; total rate for an infection
+// is C(N_GENES_PER_STRAIN, 2) * ECTOPIC_RECOMBINATION_RATE
+// if length is 1,fixed recomb rate, if length is 2, generate random recombination rate per gene from this range.
+const std::vector<double> {ECTOPIC_RECOMBINATION_RATE};
+// whether recombination rate is uniformly distribution by the range defined above, or just choose the recombinaton rate from the above categories.
+// 0 is uniform_dist, 1 is categorical, 2 is that recomb is according their group id
+const uint64_t {RECOMB_UNIFORM_DIST};
+// Probability that an ectopic recombination is a conversion
+const double {P_ECTOPIC_RECOMBINATION_IS_CONVERSION};
+
+//whether ectopic recombination generate new allele
+const bool {ECTOPIC_RECOMBINATION_CREATE_NEW_ALLELE};
+// if generating new alleles, what is the probability
+const double {P_ECTOPIC_RECOMBINATION_CREATE_NEW_ALLELE};
+
+// Duration of liver stage (pre-expression)
+const double {T_LIVER_STAGE};
+
+// whether there is a load associated with ectopic recombination
+const bool {RECOMBINATION_LOAD};
+
+// Gene deactivation rate when not immune or under neutrality
+const double {TRANSITION_RATE_NOT_IMMUNE};
+
+// Gene deactivation rate when fully immune
+const double {TRANSITION_RATE_IMMUNE};
+
+// Number of infections to gain immunity under general immunity
+const uint64_t {N_INFECTIONS_FOR_GENERAL_IMMUNITY};
+
+// Clearance rate paramters (only used for general immunity)
+const std::array<double,4> {GENERAL_IMMUNITY_PARAMS};
+
+// Clearance rate when immune (only used for general immunity)
+const double {CLEARANCE_RATE_IMMUNE};
+
+// Use this as the mean of the (truncated) exponential distribution used to draw host lifetimes
+const double {MEAN_HOST_LIFETIME};
+
+// Use this as a maximum value for host lifetimes used to truncate the exponential distribution.
+const double {MAX_HOST_LIFETIME};
+
+// maximum number of liver infections
+const uint64_t {MAX_LIVER_MOI};
+
+// maximum number of ACTIVE infections
+const uint64_t {MAX_ACTIVE_MOI};
+
+// Number of populations
+const uint64_t {N_POPULATIONS};
+
+// Number of hosts, by population.
+const std::vector<uint64_t> {N_HOSTS};
+
+// Number of initial infections, by population.
+const std::vector<uint64_t> {N_INITIAL_INFECTIONS};
+
+// Parameters governing the biting rate sinusoid for each population
+// BITING_RATE_MEAN: mean value.
+// BITING_RATE_RELATIVE_AMPLITUDE: amplitude as a fraction of the mean.
+// BITING_RATE_PEAK_PHASE: fraction of the year (between 0 and 1) at which the sinusoid should reach its peak. 
+// The period of the sinusoid is T_YEAR.
+const std::vector<double> {BITING_RATE_MEAN};
+const std::vector<double> {BITING_RATE_RELATIVE_AMPLITUDE};
+const std::vector<double> {BITING_RATE_PEAK_PHASE};
+//matrix of distances between populations,each row is the distances from the focal pop to other populations
+const std::vector<std::vector<double>> {DISTANCE_MAT};
+//how is distance translated to prob of getting transmission from
+//different pop? e.g., if there dist_power = 1, then prob of
+//transmission is weighted by dist^(-dist_power) = 1/dist;
+const double {DIST_POWER};
+//otherwise a vector of daily biting rate with a length of 360 can be supplied
+//biting rate = biting_Rate_mean * daily_biting_rate_distribution[day];
+const std::vector<double> {DAILY_BITING_RATE_DISTRIBUTION};
+//IRS parameters
+const bool {IRS_ON};
+
+const std::vector<double> {IRS_START_TIMES};
+const std::vector<std::vector<double>>  {BITING_RATE_FACTORS};
+const std::vector<double> {IRS_IMMIGRATION_RATE_FACTORS};
+//rate_factor_scale depicts the length of each change, 1 means 1day, 10000 means 10000 days
+const double {RATE_FACTOR_SCALE};
+    
+//MDA parameters
+const bool {MDA_ON};
+const std::vector<double> {MDA_START_TIMES};
+const std::vector<double> {HOST_FAIL_RATE};
+const std::vector<double> {DRUG_EFF_DURATION};
+const std::vector<double> {MDA_IMMIGRATION_RATE_FACTORS};
+
+// Whether or not to enable immigration
+const bool {IMMIGRATION_ON};
+
+// Immigration rate
+// new change here: Immigration rate here is the ratio of migration rates to biting rates
+// in infectious diseases, reproductive rate = biting rate, generation time = 1/biting rate
+// actual migration rate is updated when biting rates are updated.
+const std::vector<double> {IMMIGRATION_RATE};
+
+// ratio of effective population size of the regional pool compared to local pool, e.g., 10
+// this number determines the regional pool gene mutation and turnover rates.
+const double {REGION_TO_LOCAL_POP_SIZE_RATIO};
+
+// invasion probability of new genes.
+const double {P_GENE_INVASION};
+
+// for one in how many cleared infections to record the duration.
+const uint64_t {TOTAL_CLEARED_INFECTIONS_UNIT};
+        
+// Number of new genes created during immigration
+
+
+}} // namespace varmodel
+
+#endif // #ifndef parameters_hpp

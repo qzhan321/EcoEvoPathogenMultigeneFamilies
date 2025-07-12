@@ -1,0 +1,14 @@
+
+    // Load rows from {object_type}_{map_var}
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {object_type}_{map_var};", -1, &stmt, NULL);
+        while(true) {{
+            if(sqlite3_step(stmt) != SQLITE_ROW) {{
+                break;
+            }}
+            {object_type} * obj = object_for_id(sqlite3_column_int64(stmt, 0));
+            obj->{map_var}[sqlite3_column_{sqlite3_bind_key_type}(stmt, 1)] = sqlite3_column_{sqlite3_bind_value_type}(stmt, 2);
+        }}
+        sqlite3_finalize(stmt);
+    }}

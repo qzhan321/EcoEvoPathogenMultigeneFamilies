@@ -1,0 +1,24 @@
+
+    // Create and insert rows into {object_type}_{reflist_var}
+    {{
+        // Create {object_type}_{reflist_var}
+        sqlite3_exec(db,
+            "CREATE TABLE {object_type}_{reflist_var} (id INTEGER, ref_id INTEGER);",
+            NULL, NULL, NULL
+        );
+        
+        // Insert rows into {object_type}_{reflist_var}
+        {{
+            sqlite3_stmt * stmt = NULL;
+            sqlite3_prepare_v2(db, "INSERT INTO {object_type}_{reflist_var} VALUES (?,?);", -1, &stmt, NULL);
+            for({object_type} * obj : collection.as_vector()) {{
+                for({ref_type} * ref : obj->{reflist_var}) {{
+                    sqlite3_bind_int64(stmt, 1, obj->id);
+                    sqlite3_bind_int64(stmt, 2, ref->id);
+                    sqlite3_step(stmt);
+                    sqlite3_reset(stmt);
+                }}
+            }}
+            sqlite3_finalize(stmt);
+        }}
+    }}

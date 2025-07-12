@@ -1,0 +1,15 @@
+
+    // Load rows from {object_type}_{reflist_var}
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {object_type}_{reflist_var};", -1, &stmt, NULL);
+        while(true) {{
+            if(sqlite3_step(stmt) != SQLITE_ROW) {{
+                break;
+            }}
+            {object_type} * obj = object_for_id(sqlite3_column_int64(stmt, 0));
+            {ref_type} * ref = {reflist_var}_manager.object_for_id(sqlite3_column_int64(stmt, 1));
+            obj->{reflist_var}.insert(ref);
+        }}
+        sqlite3_finalize(stmt);
+    }}

@@ -1,0 +1,142 @@
+#include "{manager_type}.hpp"
+{manager_includes}
+#include "{object_type}.hpp"
+{object_includes}
+
+#include "IndexedSet.hpp"
+
+namespace varmodel {{
+
+{object_type} * {manager_type}::create() {{
+    return create(next_id++);
+}}
+
+{object_type} * {manager_type}::create(uint64_t id) {{
+    {object_type} * obj = new {object_type}(id);
+    collection.add(obj);
+    return obj;
+}}
+
+void {manager_type}::destroy({object_type} * obj) {{
+    collection.remove(obj);
+    delete obj;
+}}
+
+{object_type} * {manager_type}::object_for_id(uint64_t id) {{
+     return collection.object_for_id(id);
+}}
+
+size_t {manager_type}::size() {{
+    return collection.size();
+}}
+
+std::vector<{object_type} *> & {manager_type}::objects() {{
+    return collection.as_vector();
+}}
+
+void {manager_type}::load_from_checkpoint(sqlite3 * db) {{
+    // Load manager info table
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {manager_type} LIMIT 1;", -1, &stmt, NULL);
+        sqlite3_step(stmt);
+        next_id = sqlite3_column_int64(stmt, 0);
+        sqlite3_finalize(stmt);
+    }}
+    
+    // Load from columns, minus references
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {object_type};", -1, &stmt, NULL);
+        while(true) {{
+            if(sqlite3_step(stmt) != SQLITE_ROW) {{
+                break;
+            }}
+            {object_type} * obj = create(sqlite3_column_int64(stmt, 0));
+            {load_column_statements}
+        }}
+        sqlite3_finalize(stmt);
+    }}
+    
+    // Load arrays from array tables
+    {load_array_blocks}
+    
+    // Load maps from map tables
+    {load_map_blocks}
+}}
+
+{resolve_references_signature} {{
+    // Load from reference columns
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "SELECT * FROM {object_type};", -1, &stmt, NULL);
+        while(true) {{
+            if(sqlite3_step(stmt) != SQLITE_ROW) {{
+                break;
+            }}
+            {object_type} * obj = object_for_id(sqlite3_column_int64(stmt, 0));
+            {load_reference_column_statements}
+        }}
+        sqlite3_finalize(stmt);
+    }}
+    
+    // Load reference lists (std::array)
+    {load_reflist_blocks_array}
+    
+    // Load reference lists (std::vector)
+    {load_reflist_blocks_vector}
+
+    // Load reference lists (std::unordered_set)
+    {load_reflist_blocks_unordered_set}
+    
+    // Load reference lists (IndexedSet)
+    {load_reflist_blocks_IndexedSet}
+}}
+
+void {manager_type}::save_to_checkpoint(sqlite3 * db) {{
+    // Create manager info table
+    sqlite3_exec(db, "CREATE TABLE {manager_type} (next_id INTEGER);", NULL, NULL, NULL);
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "INSERT INTO {manager_type} VALUES (?);", -1, &stmt, NULL);
+        sqlite3_bind_int64(stmt, 1, next_id);
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }}
+    
+    // Create main object table
+    sqlite3_exec(db, "CREATE TABLE {object_type} (id INTEGER{sql_create_columns});", NULL, NULL, NULL);
+    
+    // Insert rows into main object table
+    {{
+        sqlite3_stmt * stmt = NULL;
+        sqlite3_prepare_v2(db, "INSERT INTO {object_type} VALUES (?{sql_insert_qmarks});", -1, &stmt, NULL);
+        for({object_type} * obj : collection.as_vector()) {{
+            sqlite3_bind_int64(stmt, 1, obj->id);
+            {bind_column_statements}
+            sqlite3_step(stmt);
+            sqlite3_reset(stmt); 
+        }}
+        sqlite3_finalize(stmt);
+    }}
+    
+    // Create and save array-valued fields into separate tables
+    {create_array_blocks}
+    
+    // Create and save map-valued fields into separate tables
+    {create_map_blocks}
+    
+    // Create and save std::array references into separate tables
+    {create_reflist_blocks_array}
+    
+    // Create and save std::vector references into separate tables
+    {create_reflist_blocks_vector}
+
+    // Create and save std::unordered_set references into separate tables
+    {create_reflist_blocks_unordered_set}
+    
+    // Create and save IndexedSet references into separate tables
+    {create_reflist_blocks_IndexedSet}
+}}
+
+}} // namespace varmodel

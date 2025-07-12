@@ -1,0 +1,25 @@
+
+    // Create and insert rows into {object_type}_{map_var}
+    {{
+        // Create {object_type}_{map_var}
+        sqlite3_exec(db,
+            "CREATE TABLE {object_type}_{map_var} (id INTEGER, key {sql_key_type}, val {sql_value_type});",
+            NULL, NULL, NULL
+        );
+        
+        // Insert rows into {object_type}_{map_var}
+        {{
+            sqlite3_stmt * stmt = NULL;
+            sqlite3_prepare_v2(db, "INSERT INTO {object_type}_{map_var} VALUES (?,?,?);", -1, &stmt, NULL);
+            for({object_type} * obj : collection.as_vector()) {{
+                for(auto & itr : obj->{map_var}) {{
+                    sqlite3_bind_int64(stmt, 1, obj->id);
+                    sqlite3_bind_{sqlite3_bind_key_type}(stmt, 2, itr.first);
+                    sqlite3_bind_{sqlite3_bind_value_type}(stmt, 3, itr.second);
+                    sqlite3_step(stmt);
+                    sqlite3_reset(stmt);
+                }}
+            }}
+            sqlite3_finalize(stmt);
+        }}
+    }}

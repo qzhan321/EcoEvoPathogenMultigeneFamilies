@@ -1,0 +1,25 @@
+
+    // Create and insert rows into {object_type}_{array_var}
+    {{
+        // Create {object_type}_{array_var}
+        sqlite3_exec(db,
+            "CREATE TABLE {object_type}_{array_var} (id INTEGER, ind INTEGER, val {sql_type});",
+            NULL, NULL, NULL
+        );
+        
+        // Insert rows into {object_type}_{array_var}
+        {{
+            sqlite3_stmt * stmt = NULL;
+            sqlite3_prepare_v2(db, "INSERT INTO {object_type}_{array_var} VALUES (?,?,?);", -1, &stmt, NULL);
+            for({object_type} * obj : collection.as_vector()) {{
+                for(uint64_t i = 0; i < obj->{array_var}.size(); i++) {{
+                    sqlite3_bind_int64(stmt, 1, obj->id);
+                    sqlite3_bind_int64(stmt, 2, i);
+                    sqlite3_bind_{sqlite3_bind_type}(stmt, 3, obj->{array_var}[i]);
+                    sqlite3_step(stmt);
+                    sqlite3_reset(stmt);
+                }}
+            }}
+            sqlite3_finalize(stmt);
+        }}
+    }}
