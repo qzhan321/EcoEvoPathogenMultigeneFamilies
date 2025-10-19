@@ -4,6 +4,8 @@
 #include <vector>
 #include <unordered_map>
 #include <cassert>
+#include <cstddef>
+using std::size_t;
 
 namespace varmodel {
 

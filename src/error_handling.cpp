@@ -179,7 +179,7 @@ void signal_handler(int sig, siginfo_t *siginfo, void *context)
     _Exit(1);
 }
 
-static uint8_t alternate_stack[SIGSTKSZ];
+/* static uint8_t alternate_stack[SIGSTKSZ]; */
 void register_signal_handler()
 {
     /* setup alternate stack */
@@ -187,7 +187,10 @@ void register_signal_handler()
         stack_t ss = {};
         /* malloc is usually used here, I'm not 100% sure my static allocation
          is valid but it seems to work just fine. */
-        ss.ss_sp = (void*)alternate_stack;
+        /* ss.ss_sp = (void*)alternate_stack;
+        ss.ss_size = SIGSTKSZ;
+        ss.ss_flags = 0; */
+        ss.ss_sp = malloc(SIGSTKSZ);
         ss.ss_size = SIGSTKSZ;
         ss.ss_flags = 0;
         

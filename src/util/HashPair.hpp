@@ -11,6 +11,7 @@ public:
 	{
 		size_t hashFirst = _hash(p.first);
 		hashFirst ^= _hash(p.second) + 0x9e3779b9 + (hashFirst << 6) + (hashFirst >> 2);
+		return hashFirst;
 	}
 private:
 	Hash _hash;
