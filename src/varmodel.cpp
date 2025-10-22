@@ -2412,22 +2412,28 @@ void verify_immunity_consistency() {
         for(Host * host : pop->hosts.as_vector()) {
             ImmuneHistory * immune_history = host->immune_history;
             
-            // Ensure that every AlleleRef in alleles_with_immunity has an immunity count present
-            for(AlleleRef * ar : immune_history->alleles_with_immunity.as_vector()) {
-                assert(immune_history->immunity_by_locus[ar->locus]->immunity_level_by_allele[ar->allele] > 0);
-            }
+            if (SELECTION_MODE == SPECIFIC_IMMUNITY) {
+              // Ensure that every AlleleRef in alleles_with_immunity has an immunity count present
+              for(AlleleRef * ar : immune_history->alleles_with_immunity.as_vector()) {
+                  assert(immune_history->immunity_by_locus[ar->locus]->immunity_level_by_allele[ar->allele] > 0);
+              }
             
-            // Ensure that the total number of present alleles is the same as the size of alleles_with_immunity,
-            // and all present alleles have immunity levels > 0
-            uint64_t allele_count = 0;
-            for(uint64_t i = 0; i < N_LOCI; i++) {
-                LocusImmunity * locus_immunity = immune_history->immunity_by_locus[i]; 
-                allele_count += locus_immunity->immunity_level_by_allele.size();
-                for(auto kv : locus_immunity->immunity_level_by_allele) {
-                    assert(kv.second > 0);
-                }
+              // Ensure that the total number of present alleles is the same as the size of alleles_with_immunity,
+              // and all present alleles have immunity levels > 0
+              uint64_t allele_count = 0;
+              for(uint64_t i = 0; i < N_LOCI; i++) {
+                  LocusImmunity * locus_immunity = immune_history->immunity_by_locus[i]; 
+                  allele_count += locus_immunity->immunity_level_by_allele.size();
+                  for(auto kv : locus_immunity->immunity_level_by_allele) {
+                      assert(kv.second > 0);
+                  }
+              }
+              assert(allele_count == immune_history->alleles_with_immunity.size());
             }
-            assert(allele_count == immune_history->alleles_with_immunity.size());
+            else if (SELECTION_MODE == NEUTRALITY) {
+              // In neutrality mode, hosts should not have any immune history
+              assert(immune_history == NULL); 
+            }
         }
     }
     
